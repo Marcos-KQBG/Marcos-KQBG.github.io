@@ -1,0 +1,83 @@
+---
+// Botón flotante (FAB) de WhatsApp, fijo abajo a la derecha.
+// `src/scripts/animaciones.js` (botonFlotante) lo oculta cuando cualquier CTA
+// de WhatsApp de la página (.wa-cta) está en pantalla, y lo vuelve a mostrar
+// al salir. Sin JS se queda visible siempre (es el CTA de reserva).
+import { enlaceWhatsapp } from '../data/clinica.js';
+const wa = enlaceWhatsapp();
+---
+
+<a
+  id="wa-fab"
+  class="wa-fab"
+  href={wa}
+  target="_blank"
+  rel="noopener"
+  aria-label="Pedir cita por WhatsApp"
+>
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path
+      d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 004.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91C21.95 6.45 17.5 2 12.04 2zm5.8 14.14c-.24.68-1.42 1.31-1.95 1.36-.5.05-1.13.07-1.83-.11-.42-.13-.96-.31-1.66-.61-2.92-1.26-4.82-4.2-4.97-4.4-.15-.2-1.2-1.59-1.2-3.03s.76-2.15 1.03-2.45c.27-.29.58-.36.78-.36.19 0 .39 0 .56.01.18.01.42-.07.66.5.24.59.82 2.03.89 2.18.07.15.12.32.02.51-.09.2-.14.32-.28.49-.14.17-.29.38-.42.51-.14.14-.28.29-.12.56.16.27.72 1.18 1.54 1.91 1.06.94 1.95 1.24 2.22 1.38.27.14.43.12.59-.07.16-.19.68-.79.86-1.06.18-.27.36-.22.61-.13.25.09 1.59.75 1.86.89.27.14.45.2.51.31.07.12.07.68-.17 1.35z"
+    ></path>
+  </svg>
+  <span class="wa-fab__txt">Pedir cita</span>
+</a>
+
+<style>
+  .wa-fab {
+    position: fixed;
+    right: clamp(16px, 4vw, 28px);
+    bottom: clamp(16px, 4vw, 28px);
+    z-index: 40;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px 14px 18px;
+    border-radius: 999px;
+    background: var(--brand);
+    color: #fff;
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 0.98rem;
+    box-shadow: 0 16px 38px -10px rgba(8, 168, 155, 0.8);
+    transition:
+      opacity 0.3s ease,
+      transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      background 0.2s;
+  }
+  .wa-fab svg {
+    width: 24px;
+    height: 24px;
+    flex: none;
+  }
+  .wa-fab:hover {
+    background: var(--brand-deep);
+    transform: translateY(-3px);
+    box-shadow: 0 22px 44px -12px rgba(8, 168, 155, 0.9);
+  }
+  /* Oculto: cuando hay un CTA de WhatsApp visible en la página */
+  .wa-fab.oculto {
+    opacity: 0;
+    transform: translateY(26px) scale(0.82);
+    pointer-events: none;
+  }
+
+  @media (max-width: 680px) {
+    .wa-fab {
+      padding: 15px;
+      gap: 0;
+    }
+    .wa-fab__txt {
+      display: none; /* icono solo; el nombre lo da aria-label */
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wa-fab {
+      transition: opacity 0.2s ease;
+    }
+    .wa-fab.oculto {
+      transform: none;
+    }
+  }
+</style>

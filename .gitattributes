@@ -1,0 +1,11 @@
+# Normaliza finales de línea: en el repo siempre LF (el CI compila en Linux).
+* text=auto eol=lf
+
+# Binarios: que git no los toque.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary

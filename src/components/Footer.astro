@@ -1,0 +1,103 @@
+---
+import { Image } from 'astro:assets';
+import { clinica, direccionUnaLinea } from '../data/clinica.js';
+import marca from '../assets/marca.png';
+
+const enlaces = [
+  { href: '#servicios', texto: 'Servicios' },
+  { href: '#clinica', texto: 'La clínica' },
+  { href: '#galeria', texto: 'Galería' },
+  { href: '#ubicacion', texto: 'Dónde estamos' },
+  { href: '#contacto', texto: 'Contacto' },
+];
+---
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <a class="brand" href="#top" aria-label="El Perro Verde, inicio">
+        <Image
+          class="mark"
+          src={marca}
+          width={148}
+          height={80}
+          alt=""
+          loading="lazy"
+          decoding="async"
+        />
+        <span>El Perro Verde<small>Clínica veterinaria · Magallón</small></span>
+      </a>
+      <ul class="foot-links">
+        {
+          enlaces.map((e) => (
+            <li>
+              <a href={e.href}>{e.texto}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+    <div class="copy">
+      © <span id="year">{new Date().getFullYear()}</span>
+      {clinica.nombre} · {direccionUnaLinea()} · {clinica.email}
+    </div>
+  </div>
+</footer>
+
+<style>
+  footer {
+    padding: 56px 0 40px;
+    border-top: 1px solid var(--line);
+    margin-top: 40px;
+  }
+  .foot {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    font-family: var(--serif);
+    font-size: 1.28rem;
+    color: var(--ink);
+  }
+  .brand .mark {
+    width: auto;
+    height: 40px;
+    flex: none;
+  }
+  .brand small {
+    display: block;
+    font-family: var(--sans);
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    font-weight: 600;
+    margin-top: 2px;
+  }
+  .foot-links {
+    display: flex;
+    gap: 22px;
+    list-style: none;
+    flex-wrap: wrap;
+  }
+  .foot-links a {
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+  .foot-links a:hover {
+    color: var(--brand-deep);
+  }
+  .copy {
+    width: 100%;
+    color: var(--muted);
+    font-size: 0.82rem;
+    margin-top: 26px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+  }
+</style>

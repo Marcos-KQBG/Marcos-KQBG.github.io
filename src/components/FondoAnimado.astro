@@ -1,0 +1,115 @@
+---
+// Fondo animado (todo decorativo -> aria-hidden):
+//  - "blobs" teal desenfocados que se mueven lento (solo CSS).
+//  - Huellas de perro: cada cierto tiempo (aleatorio) cruza un "paseo" que va
+//    dejando pisadas de lado a lado de la pantalla, a veces en línea recta, a
+//    veces serpenteando. Lo genera `src/scripts/animaciones.js`; entre paseo y
+//    paseo el fondo queda tranquilo. Sin JS: solo se ven los blobs.
+//  - Al pasar el ratón cerca de una pisada, se aparta del cursor.
+---
+
+<div class="bg" aria-hidden="true">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+
+  <div class="patas" data-patas></div>
+</div>
+
+<style>
+  .bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    background: linear-gradient(180deg, #fbfdfc 0%, #f1f8f6 55%, #eaf6f3 100%);
+  }
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.5;
+    background: radial-gradient(
+      circle at 30% 30%,
+      rgba(8, 168, 155, 0.55),
+      rgba(8, 168, 155, 0) 70%
+    );
+  }
+  .blob.b1 {
+    width: 640px;
+    height: 640px;
+    top: -160px;
+    left: -140px;
+    animation: drift1 26s ease-in-out infinite;
+  }
+  .blob.b2 {
+    width: 520px;
+    height: 520px;
+    top: 32%;
+    right: -160px;
+    opacity: 0.4;
+    background: radial-gradient(
+      circle at 30% 30%,
+      rgba(4, 122, 112, 0.5),
+      rgba(4, 122, 112, 0) 70%
+    );
+    animation: drift2 32s ease-in-out infinite;
+  }
+  .blob.b3 {
+    width: 460px;
+    height: 460px;
+    bottom: -160px;
+    left: 36%;
+    opacity: 0.35;
+    animation: drift3 30s ease-in-out infinite;
+  }
+  @keyframes drift1 {
+    50% {
+      transform: translate(120px, 80px) scale(1.15);
+    }
+  }
+  @keyframes drift2 {
+    50% {
+      transform: translate(-100px, -70px) scale(1.1);
+    }
+  }
+  @keyframes drift3 {
+    50% {
+      transform: translate(60px, -90px) scale(1.2);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .blob {
+      animation: none !important;
+    }
+    /* Huellas: el JS no lanza ningún paseo con reduced-motion. */
+  }
+</style>
+
+<!-- Las huellas las crea el JS en runtime, así que el CSS del componente (que
+     Astro "scopea") no las alcanzaría: va como global. -->
+<style is:global>
+  .patas {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .patas .pata {
+    --lado: clamp(22px, 2.8vw, 38px);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--lado);
+    height: var(--lado);
+    margin: calc(var(--lado) / -2) 0 0 calc(var(--lado) / -2);
+    color: #08a89b;
+    opacity: 0;
+    will-change: transform, opacity;
+  }
+  .patas .pata svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+</style>

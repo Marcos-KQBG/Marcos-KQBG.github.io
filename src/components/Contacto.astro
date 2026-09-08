@@ -1,0 +1,55 @@
+---
+import { enlaceWhatsapp } from '../data/clinica.js';
+const wa = enlaceWhatsapp();
+---
+
+<section id="contacto">
+  <div class="wrap">
+    <div class="cta-band reveal">
+      <h2>¿Pedimos cita para tu mascota?</h2>
+      <p>
+        Escríbenos por WhatsApp y te respondemos lo antes posible. Sin llamadas ni
+        esperas.
+      </p>
+      <a class="btn wa-cta" href={wa} target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path
+            d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 004.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91C21.95 6.45 17.5 2 12.04 2zm5.8 14.14c-.24.68-1.42 1.31-1.95 1.36-.5.05-1.13.07-1.83-.11-.42-.13-.96-.31-1.66-.61-2.92-1.26-4.82-4.2-4.97-4.4-.15-.2-1.2-1.59-1.2-3.03s.76-2.15 1.03-2.45c.27-.29.58-.36.78-.36.19 0 .39 0 .56.01.18.01.42-.07.66.5.24.59.82 2.03.89 2.18.07.15.12.32.02.51-.09.2-.14.32-.28.49-.14.17-.29.38-.42.51-.14.14-.28.29-.12.56.16.27.72 1.18 1.54 1.91 1.06.94 1.95 1.24 2.22 1.38.27.14.43.12.59-.07.16-.19.68-.79.86-1.06.18-.27.36-.22.61-.13.25.09 1.59.75 1.86.89.27.14.45.2.51.31.07.12.07.68-.17 1.35z"
+          ></path>
+        </svg>
+        Escríbenos por WhatsApp
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-band {
+    text-align: center;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 32px;
+    padding: 64px 40px;
+    box-shadow: var(--shadow);
+  }
+  .cta-band h2 {
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    margin-bottom: 14px;
+  }
+  .cta-band p {
+    color: var(--muted);
+    font-size: 1.1rem;
+    max-width: 44ch;
+    margin: 0 auto 32px;
+  }
+  .cta-band .btn {
+    font-size: 1.05rem;
+    padding: 16px 30px;
+  }
+
+  @media (max-width: 680px) {
+    .cta-band {
+      padding: 38px 26px;
+    }
+  }
+</style>

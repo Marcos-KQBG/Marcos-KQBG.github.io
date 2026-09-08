@@ -1,0 +1,109 @@
+---
+import { clinica, direccionUnaLinea } from '../data/clinica.js';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Ruta de la página (para canonical / OG). Por defecto la home. */
+  path?: string;
+}
+
+const {
+  title = 'Clínica Veterinaria en Magallón (Zaragoza) — El Perro Verde',
+  description = clinica.descripcion,
+  path = '/',
+} = Astro.props;
+
+const canonical = new URL(path, clinica.dominio).href;
+const ogImage = new URL('/img/og.png', clinica.dominio).href;
+const d = clinica.direccion;
+
+// JSON-LD schema.org/VeterinaryCare
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'VeterinaryCare',
+  name: clinica.nombre,
+  description: clinica.descripcion,
+  url: clinica.dominio,
+  email: clinica.email,
+  image: ogImage,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: d.calle,
+    postalCode: d.cp,
+    addressLocality: d.localidad,
+    addressRegion: d.provincia,
+    addressCountry: d.pais,
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: d.lat,
+    longitude: d.lng,
+  },
+  ...(clinica.telefono && clinica.telefono !== 'Por confirmar'
+    ? { telephone: clinica.telefono }
+    : {}),
+  ...(clinica.openingHours.length ? { openingHours: clinica.openingHours } : {}),
+};
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="canonical" href={canonical} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#08a89b" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={clinica.nombre} />
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- Iconos -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Figtree:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Marca el documento como "con JS" cuanto antes para evitar parpadeos -->
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#contenido">Saltar al contenido</a>
+    <slot />
+
+    <script>
+      import '../scripts/animaciones.js';
+    </script>
+  </body>
+</html>

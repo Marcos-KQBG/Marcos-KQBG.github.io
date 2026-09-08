@@ -1,0 +1,178 @@
+---
+import { Image } from 'astro:assets';
+import marca from '../assets/marca.png';
+
+const enlaces = [
+  { href: '#servicios', texto: 'Servicios' },
+  { href: '#clinica', texto: 'La clínica' },
+  { href: '#galeria', texto: 'Galería' },
+  { href: '#ubicacion', texto: 'Dónde estamos' },
+  { href: '#contacto', texto: 'Contacto' },
+];
+---
+
+<header id="top">
+  <div class="wrap nav">
+    <a class="brand" href="#top" aria-label="El Perro Verde, inicio">
+      <Image
+        class="mark"
+        src={marca}
+        width={148}
+        height={80}
+        alt=""
+        loading="eager"
+        decoding="async"
+      />
+      <span>El Perro Verde<small>CLÍNICA VETERINARIA</small></span>
+    </a>
+
+    <nav class="nav-right" aria-label="Principal">
+      <ul class="menu" id="menu">
+        {
+          enlaces.map((e) => (
+            <li>
+              <a href={e.href}>{e.texto}</a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <button
+        class="hamb"
+        id="hamb"
+        aria-label="Abrir menú"
+        aria-expanded="false"
+        aria-controls="menu"
+      >
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<style>
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    transition: background 0.3s, box-shadow 0.3s, padding 0.3s;
+  }
+  header.scrolled {
+    background: rgba(251, 253, 252, 0.82);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 1px 0 var(--line);
+  }
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 0;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    font-family: var(--serif);
+    font-size: 1.28rem;
+    color: var(--ink);
+  }
+  .brand .mark {
+    width: auto;
+    height: 40px;
+    flex: none;
+  }
+  .brand small {
+    display: block;
+    font-family: var(--sans);
+    font-size: 0.6rem;
+    letter-spacing: 0.22em;
+    color: var(--brand-deep);
+    font-weight: 600;
+    margin-top: 2px;
+  }
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+  .menu {
+    display: flex;
+    gap: 26px;
+    list-style: none;
+  }
+  .menu a {
+    font-size: 0.94rem;
+    color: var(--muted);
+    position: relative;
+    padding: 4px 0;
+    transition: color 0.2s;
+  }
+  .menu a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 0;
+    height: 2px;
+    background: var(--brand);
+    transition: width 0.25s;
+  }
+  .menu a:hover {
+    color: var(--ink);
+  }
+  .menu a:hover::after {
+    width: 100%;
+  }
+  .hamb {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+  }
+  .hamb span {
+    width: 24px;
+    height: 2px;
+    background: var(--ink);
+    border-radius: 2px;
+    transition: transform 0.3s, opacity 0.3s;
+  }
+
+  @media (max-width: 680px) {
+    .menu {
+      display: none;
+    }
+    .nav-right {
+      gap: 0;
+    }
+    .hamb {
+      display: flex;
+    }
+    .menu.open {
+      display: flex;
+      position: absolute;
+      top: 72px;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      background: rgba(251, 253, 252, 0.97);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      padding: 20px 24px;
+      gap: 18px;
+      box-shadow: 0 20px 40px -20px rgba(6, 63, 58, 0.4);
+    }
+    .hamb.active span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+    .hamb.active span:nth-child(2) {
+      opacity: 0;
+    }
+    .hamb.active span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+  }
+</style>

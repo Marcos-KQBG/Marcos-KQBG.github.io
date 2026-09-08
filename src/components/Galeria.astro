@@ -1,0 +1,379 @@
+---
+import { Image } from 'astro:assets';
+
+// Fotos de la galería. Ahora son PLACEHOLDERS de marca (ver
+// scripts/generar-galeria-placeholder.mjs). Para poner las fotos reales:
+// sustituye los archivos de src/assets/galeria/ (jpg/png/webp) y ajusta los
+// pies de foto de abajo. El orden es alfabético por nombre de archivo.
+const imagenes = import.meta.glob<{ default: ImageMetadata }>(
+  '../assets/galeria/*.{jpg,jpeg,png,webp,avif}',
+  { eager: true }
+);
+
+const slides = Object.entries(imagenes)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([, mod]) => mod.default);
+
+// Pies de foto (uno por imagen, en el mismo orden). Editar con nombres reales.
+const pies = [
+  { nombre: 'Luna', nota: 'Con nosotros desde 2021' },
+  { nombre: 'Rocky', nota: 'Revisión anual' },
+  { nombre: 'Michi', nota: 'Después de su vacuna' },
+  { nombre: 'Nala', nota: 'Peluquería y baño' },
+  { nombre: 'Simba', nota: 'Primera visita' },
+  { nombre: 'Coco', nota: 'Cliente de la tienda' },
+];
+---
+
+<section id="galeria">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="dot"></span>Nuestras mascotas</span>
+      <h2>Algunos de los que ya han pasado por aquí</h2>
+      <p>
+        Perros y gatos de Magallón y la comarca que confían en nosotros. Pronto,
+        con sus fotos de verdad.
+      </p>
+    </div>
+
+    <div
+      class="carrusel reveal"
+      role="group"
+      aria-roledescription="carrusel"
+      aria-label="Fotos de mascotas"
+    >
+      <button
+        type="button"
+        class="car-nav prev"
+        aria-label="Foto anterior"
+        data-dir="-1"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>
+      </button>
+
+      <ul class="car-track">
+        {
+          slides.map((img, i) => (
+            <li class="slide">
+              <figure>
+                <Image
+                  src={img}
+                  alt={
+                    pies[i]
+                      ? `${pies[i].nombre}, mascota atendida en El Perro Verde`
+                      : 'Mascota atendida en El Perro Verde'
+                  }
+                  widths={[400, 800, 1200]}
+                  sizes="(max-width: 700px) 88vw, 520px"
+                  loading={i === 0 ? 'eager' : 'lazy'}
+                />
+                {pies[i] && (
+                  <figcaption>
+                    <strong>{pies[i].nombre}</strong>
+                    <span>{pies[i].nota}</span>
+                  </figcaption>
+                )}
+              </figure>
+            </li>
+          ))
+        }
+      </ul>
+
+      <button
+        type="button"
+        class="car-nav next"
+        aria-label="Foto siguiente"
+        data-dir="1"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>
+      </button>
+
+      <div class="car-dots" role="tablist" aria-label="Ir a una foto">
+        {
+          slides.map((_, i) => (
+            <button
+              type="button"
+              class="car-dot"
+              role="tab"
+              aria-label={`Ir a la foto ${i + 1}`}
+              aria-selected={i === 0 ? 'true' : 'false'}
+              data-i={i}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .carrusel {
+    position: relative;
+  }
+  .car-track {
+    position: relative;
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding: 4px;
+    margin: 0 -4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .car-track::-webkit-scrollbar {
+    display: none;
+  }
+  /* Espaciadores para que la primera y la última foto también puedan centrarse. */
+  .car-track::before,
+  .car-track::after {
+    content: "";
+    flex: 0 0 max(0px, calc((100% - 520px) / 2));
+  }
+  .slide {
+    flex: 0 0 520px;
+    max-width: 88vw;
+  }
+  figure {
+    position: relative;
+    margin: 0;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    background: var(--brand-soft);
+  }
+  figure :global(img) {
+    width: 100%;
+    height: 380px;
+    object-fit: cover;
+    display: block;
+  }
+  figcaption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 34px 20px 16px;
+    color: #fff;
+    background: linear-gradient(
+      to top,
+      rgba(6, 63, 58, 0.72),
+      rgba(6, 63, 58, 0)
+    );
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  figcaption strong {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 1.2rem;
+  }
+  figcaption span {
+    font-size: 0.86rem;
+    opacity: 0.9;
+  }
+
+  .car-nav {
+    position: absolute;
+    top: 190px;
+    z-index: 3;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: rgba(251, 253, 252, 0.9);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    color: var(--brand-deep);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    box-shadow: 0 10px 24px -12px rgba(6, 63, 58, 0.5);
+    transition: transform 0.18s, background 0.2s;
+  }
+  .car-nav:hover {
+    transform: translateY(-2px);
+    background: #fff;
+  }
+  .car-nav svg {
+    width: 20px;
+    height: 20px;
+  }
+  .car-nav.prev {
+    left: -10px;
+  }
+  .car-nav.next {
+    right: -10px;
+  }
+
+  .car-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 26px;
+  }
+  .car-dot {
+    width: 9px;
+    height: 9px;
+    padding: 0;
+    border-radius: 50%;
+    border: none;
+    background: var(--line);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .car-dot[aria-selected='true'] {
+    background: var(--brand);
+    transform: scale(1.35);
+  }
+
+  @media (max-width: 700px) {
+    .slide {
+      flex-basis: 88vw;
+    }
+    figure :global(img) {
+      height: 320px;
+    }
+    .car-nav {
+      top: 160px;
+    }
+    .car-nav.prev {
+      left: 2px;
+    }
+    .car-nav.next {
+      right: 2px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .car-track {
+      scroll-behavior: auto;
+    }
+  }
+</style>
+
+<script>
+  const carrusel = document.querySelector<HTMLElement>('.carrusel');
+  const track = carrusel?.querySelector<HTMLElement>('.car-track') ?? null;
+  const slides = carrusel
+    ? [...carrusel.querySelectorAll<HTMLElement>('.slide')]
+    : [];
+
+  if (carrusel && track && slides.length > 1) {
+    const dots = [...carrusel.querySelectorAll<HTMLButtonElement>('.car-dot')];
+    const navs = [...carrusel.querySelectorAll<HTMLButtonElement>('.car-nav')];
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    let actual = 0;
+
+    const marcarDots = (i: number) => {
+      dots.forEach((d, j) =>
+        d.setAttribute('aria-selected', String(j === i))
+      );
+    };
+
+    const irA = (i: number, suave = true) => {
+      actual = (i + slides.length) % slides.length;
+      const s = slides[actual];
+      const centroSlide =
+        s.getBoundingClientRect().left + s.offsetWidth / 2;
+      const centroTrack =
+        track.getBoundingClientRect().left + track.clientWidth / 2;
+      track.scrollBy({
+        left: centroSlide - centroTrack,
+        behavior: suave && !mq.matches ? 'smooth' : 'auto',
+      });
+      marcarDots(actual);
+    };
+
+    navs.forEach((b) =>
+      b.addEventListener('click', () => {
+        irA(actual + Number(b.dataset.dir));
+        reiniciarAuto();
+      })
+    );
+    dots.forEach((d) =>
+      d.addEventListener('click', () => {
+        irA(Number(d.dataset.i));
+        reiniciarAuto();
+      })
+    );
+
+    const slideMasCentrado = () => {
+      const centroTrack =
+        track.getBoundingClientRect().left + track.clientWidth / 2;
+      let mejor = 0;
+      let min = Infinity;
+      slides.forEach((s, i) => {
+        const c = s.getBoundingClientRect().left + s.offsetWidth / 2;
+        const d = Math.abs(c - centroTrack);
+        if (d < min) {
+          min = d;
+          mejor = i;
+        }
+      });
+      return { indice: mejor, distancia: min };
+    };
+
+    // Al deslizar con el dedo: actualiza el dot y, al parar, encaja la foto.
+    let raf = 0;
+    let finScroll = 0;
+    track.addEventListener(
+      'scroll',
+      () => {
+        if (!raf) {
+          raf = requestAnimationFrame(() => {
+            raf = 0;
+            const { indice } = slideMasCentrado();
+            actual = indice;
+            marcarDots(indice);
+          });
+        }
+        clearTimeout(finScroll);
+        finScroll = window.setTimeout(() => {
+          const max = track.scrollWidth - track.clientWidth;
+          if (track.scrollLeft <= 1 || track.scrollLeft >= max - 1) return;
+          const { indice, distancia } = slideMasCentrado();
+          if (distancia > 4) irA(indice);
+        }, 140);
+      },
+      { passive: true }
+    );
+
+    // Autoplay (se pausa al interactuar, con foco, oculto o reduced-motion).
+    let timer = 0;
+    const parar = () => {
+      if (timer) clearInterval(timer);
+      timer = 0;
+    };
+    const arrancar = () => {
+      if (mq.matches || timer || document.hidden) return;
+      timer = window.setInterval(() => irA(actual + 1), 5500);
+    };
+    const reiniciarAuto = () => {
+      parar();
+      arrancar();
+    };
+
+    carrusel.addEventListener('pointerenter', parar);
+    carrusel.addEventListener('pointerleave', arrancar);
+    carrusel.addEventListener('focusin', parar);
+    carrusel.addEventListener('focusout', arrancar);
+    document.addEventListener('visibilitychange', () =>
+      document.hidden ? parar() : arrancar()
+    );
+    mq.addEventListener?.('change', () => (mq.matches ? parar() : arrancar()));
+
+    // Solo hace autoplay mientras el carrusel está en pantalla.
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(
+        (e) => (e[0].isIntersecting ? arrancar() : parar()),
+        { threshold: 0.25 }
+      ).observe(carrusel);
+    } else {
+      arrancar();
+    }
+  }
+</script>

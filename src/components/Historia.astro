@@ -1,0 +1,112 @@
+---
+// La clínica / historia + contadores de prueba social.
+const stats = [
+  { count: 5, texto: 'años de experiencia', formato: '5' },
+  { count: 2000, texto: 'clientes satisfechos', formato: '2.000' },
+  { count: 10000, texto: 'productos vendidos', formato: '10.000' },
+];
+---
+
+<section id="clinica">
+  <div class="wrap">
+    <div class="story reveal">
+      <span class="eyebrow"><span class="dot"></span>Nuestra historia</span>
+      <h2>Cinco años ganándonos la confianza de Borja y comarca</h2>
+      <p>
+        Empezamos como peluquería canina y tienda de animales, y muchas familias
+        nos confiaron a sus mascotas. Ahora damos el paso a una clínica
+        veterinaria en Magallón para cuidar también de su salud, con la misma
+        cercanía de siempre.
+      </p>
+      <div class="stats">
+        {
+          stats.map((s) => (
+            <div class="stat">
+              <div class="n">
+                <span data-count={s.count}>{s.formato}</span>+
+              </div>
+              <div class="t">{s.texto}</div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .story {
+    background: linear-gradient(
+      135deg,
+      var(--brand) 0%,
+      var(--brand-deep) 100%
+    );
+    border-radius: 32px;
+    padding: 64px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+  .story::before {
+    content: "";
+    position: absolute;
+    width: 340px;
+    height: 340px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.09);
+    top: -120px;
+    right: -80px;
+  }
+  .story .eyebrow {
+    color: #bff0ea;
+    margin-bottom: 16px;
+  }
+  .story .eyebrow .dot {
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.25);
+  }
+  .story h2 {
+    font-size: clamp(1.9rem, 3.6vw, 2.6rem);
+    color: #fff;
+    max-width: 24ch;
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .story p {
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 52ch;
+    position: relative;
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 48px;
+    position: relative;
+  }
+  .stat .n {
+    font-family: var(--serif);
+    font-size: clamp(2.4rem, 5vw, 3.4rem);
+    line-height: 1;
+  }
+  .stat .t {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.98rem;
+    margin-top: 6px;
+  }
+
+  @media (max-width: 900px) {
+    .story {
+      padding: 44px;
+    }
+  }
+  @media (max-width: 680px) {
+    .story {
+      padding: 38px 26px;
+    }
+    .stats {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+  }
+</style>

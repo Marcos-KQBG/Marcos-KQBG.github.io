@@ -1,0 +1,55 @@
+---
+interface Props {
+  titulo: string;
+  texto: string;
+}
+const { titulo, texto } = Astro.props;
+---
+
+<article class="svc reveal">
+  <div class="ico">
+    <slot />
+  </div>
+  <h3>{titulo}</h3>
+  <p>{texto}</p>
+</article>
+
+<style>
+  .svc {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 30px;
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+  .svc:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow);
+  }
+  .ico {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: var(--brand-soft);
+    display: grid;
+    place-items: center;
+    margin-bottom: 20px;
+  }
+  .ico :global(svg) {
+    width: 26px;
+    height: 26px;
+    stroke: var(--brand-deep);
+    fill: none;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  h3 {
+    font-size: 1.25rem;
+    margin-bottom: 8px;
+  }
+  p {
+    color: var(--muted);
+    font-size: 0.96rem;
+  }
+</style>
