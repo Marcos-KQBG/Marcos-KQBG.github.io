@@ -268,15 +268,35 @@ const pies = [
       );
     };
 
+    // Posición absoluta (no relativa al scroll actual) a la que hay que
+    // llevar el track para centrar la foto i, recortada a los límites del
+    // track. Al no tener espaciadores al principio/final, la primera y la
+    // última foto no llegan a quedar 100% centradas: se quedan pegadas al
+    // borde, y eso hay que calcularlo aquí en vez de con `scrollBy` relativo
+    // (que se desincroniza justo en esos dos extremos).
+    const max = () => track.scrollWidth - track.clientWidth;
+    const objetivo = (i: number) => {
+      const s = slides[i];
+      const centrado = s.offsetLeft + s.offsetWidth / 2 - track.clientWidth / 2;
+      return Math.max(0, Math.min(max(), centrado));
+    };
+
+    // Mientras dura el scroll suave lanzado por nosotros mismos (flechas o
+    // puntos), el listener de más abajo no debe "corregir" nada: si lo hace
+    // a medio camino (el scroll suave tarda varios frames en llegar), corta
+    // la animación y la redirige a la foto anterior en vez de a la pedida.
+    let programado = false;
+    let finProgramado = 0;
+
     const irA = (i: number, suave = true) => {
       actual = (i + slides.length) % slides.length;
-      const s = slides[actual];
-      const centroSlide =
-        s.getBoundingClientRect().left + s.offsetWidth / 2;
-      const centroTrack =
-        track.getBoundingClientRect().left + track.clientWidth / 2;
-      track.scrollBy({
-        left: centroSlide - centroTrack,
+      programado = true;
+      clearTimeout(finProgramado);
+      finProgramado = window.setTimeout(() => {
+        programado = false;
+      }, 700);
+      track.scrollTo({
+        left: objetivo(actual),
         behavior: suave && !mq.matches ? 'smooth' : 'auto',
       });
       marcarDots(actual);
@@ -295,20 +315,19 @@ const pies = [
       })
     );
 
-    const slideMasCentrado = () => {
-      const centroTrack =
-        track.getBoundingClientRect().left + track.clientWidth / 2;
+    // Foto cuya posición objetivo está más cerca del scroll actual (en vez de
+    // comparar centros visuales, que en los extremos da resultados ambiguos).
+    const indiceMasCercano = () => {
       let mejor = 0;
       let min = Infinity;
-      slides.forEach((s, i) => {
-        const c = s.getBoundingClientRect().left + s.offsetWidth / 2;
-        const d = Math.abs(c - centroTrack);
+      slides.forEach((_, i) => {
+        const d = Math.abs(objetivo(i) - track.scrollLeft);
         if (d < min) {
           min = d;
           mejor = i;
         }
       });
-      return { indice: mejor, distancia: min };
+      return mejor;
     };
 
     // Al deslizar con el dedo: actualiza el dot y, al parar, encaja la foto.
@@ -317,20 +336,20 @@ const pies = [
     track.addEventListener(
       'scroll',
       () => {
+        if (programado) return;
         if (!raf) {
           raf = requestAnimationFrame(() => {
             raf = 0;
-            const { indice } = slideMasCentrado();
-            actual = indice;
-            marcarDots(indice);
+            actual = indiceMasCercano();
+            marcarDots(actual);
           });
         }
         clearTimeout(finScroll);
         finScroll = window.setTimeout(() => {
-          const max = track.scrollWidth - track.clientWidth;
-          if (track.scrollLeft <= 1 || track.scrollLeft >= max - 1) return;
-          const { indice, distancia } = slideMasCentrado();
-          if (distancia > 4) irA(indice);
+          const destino = objetivo(actual);
+          if (Math.abs(track.scrollLeft - destino) > 4) {
+            track.scrollTo({ left: destino, behavior: mq.matches ? 'auto' : 'smooth' });
+          }
         }, 140);
       },
       { passive: true }
