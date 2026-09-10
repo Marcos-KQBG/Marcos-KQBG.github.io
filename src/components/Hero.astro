@@ -1,5 +1,7 @@
 ---
+import { Image } from 'astro:assets';
 import { enlaceWhatsapp } from '../data/clinica.js';
+import heroPortada from '../assets/hero-portada.jpg';
 const wa = enlaceWhatsapp();
 ---
 
@@ -42,41 +44,15 @@ const wa = enlaceWhatsapp();
     </div>
 
     <div class="hero-panel reveal">
-      <svg
+      <Image
         class="scene"
-        viewBox="0 0 360 320"
-        role="img"
-        aria-label="Ilustración de un perro y un gato"
-      >
-        <rect x="0" y="0" width="360" height="320" rx="24" fill="#e7f5f2"></rect>
-        <ellipse cx="180" cy="284" rx="120" ry="16" fill="#c7e8e1"></ellipse>
-        <g fill="#08a89b">
-          <ellipse cx="128" cy="210" rx="52" ry="46"></ellipse>
-          <path d="M92 176c-14-6-24 2-22 16 2 12 14 16 26 12z"></path>
-          <path d="M164 176c14-6 24 2 22 16-2 12-14 16-26 12z"></path>
-          <circle cx="128" cy="150" r="40"></circle>
-        </g>
-        <ellipse cx="128" cy="164" rx="20" ry="16" fill="#d6f0ec"></ellipse>
-        <circle cx="128" cy="158" r="5" fill="#0a3b37"></circle>
-        <circle cx="114" cy="142" r="4" fill="#0a3b37"></circle>
-        <circle cx="142" cy="142" r="4" fill="#0a3b37"></circle>
-        <g fill="#067a70">
-          <path d="M232 150l-14-30 30 14z"></path>
-          <path d="M304 150l14-30-30 14z"></path>
-          <circle cx="268" cy="170" r="38"></circle>
-          <ellipse cx="268" cy="232" rx="42" ry="36"></ellipse>
-          <path d="M300 224c16-2 24 8 20 20-4 10-16 10-24 2z"></path>
-        </g>
-        <circle cx="256" cy="166" r="4.5" fill="#eafaf7"></circle>
-        <circle cx="280" cy="166" r="4.5" fill="#eafaf7"></circle>
-        <path d="M268 178l-5 6h10z" fill="#eafaf7"></path>
-        <path
-          d="M263 188c3 3 7 3 10 0"
-          stroke="#eafaf7"
-          stroke-width="2.2"
-          fill="none"
-          stroke-linecap="round"></path>
-      </svg>
+        src={heroPortada}
+        alt="Perro y gato juntos, el cuidado cercano de El Perro Verde"
+        width={700}
+        height={467}
+        loading="eager"
+        decoding="async"
+      />
 
       <div class="float-card fc1">
         <span class="num" data-count="5">5</span>
@@ -105,7 +81,7 @@ const wa = enlaceWhatsapp();
 
 <style>
   .hero {
-    padding: 72px 0 90px;
+    padding: 72px 0 32px;
   }
   .hero-grid {
     display: grid;
@@ -161,8 +137,10 @@ const wa = enlaceWhatsapp();
     border: 1px solid var(--line);
   }
   .hero-panel .scene {
+    display: block;
     width: 100%;
     height: auto;
+    border-radius: 20px;
   }
   .float-card {
     position: absolute;
