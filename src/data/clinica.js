@@ -15,11 +15,9 @@ export const clinica = {
 
   // Contacto
   email: 'info@perroverde.es',
-  // Teléfono y WhatsApp pendientes del cliente:
-  telefono: PENDIENTE,
+  telefono: '+34 609 43 56 62',
   // Número en formato internacional sin "+" ni espacios, p. ej. '34976000000'.
-  // Mientras no lo tengamos, dejamos null y el botón enlaza igualmente a wa.me.
-  whatsapp: null,
+  whatsapp: '34609435662',
   mensajeWhatsapp: 'Hola, me gustaría pedir cita en El Perro Verde',
 
   // Dirección

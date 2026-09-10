@@ -1,5 +1,5 @@
 ---
-import { clinica } from '../data/clinica.js';
+import { clinica, PENDIENTE } from '../data/clinica.js';
 const d = clinica.direccion;
 const mapaQuery = encodeURIComponent(
   `${d.calle} ${d.cp} ${d.localidad} ${d.provincia}`
@@ -32,7 +32,17 @@ const mapaQuery = encodeURIComponent(
           </svg>
           <div>
             <div class="k">TELÉFONO</div>
-            <div class="v pending">{clinica.telefono}</div>
+            {
+              clinica.telefono === PENDIENTE ? (
+                <div class="v pending">{clinica.telefono}</div>
+              ) : (
+                <div class="v">
+                  <a href={`tel:${clinica.telefono.replace(/\s+/g, '')}`}>
+                    {clinica.telefono}
+                  </a>
+                </div>
+              )
+            }
           </div>
         </div>
 
