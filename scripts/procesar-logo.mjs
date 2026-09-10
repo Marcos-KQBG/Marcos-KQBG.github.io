@@ -8,6 +8,12 @@
 // texto, para el header/footer) del logo completo, y generar la versión en
 // blanco (para fondos teal) recoloreando en vez de tener que extraerla de
 // otra imagen.
+//
+// Nota: se probó a sustituir el paso 3 por assets/AnimalesLogo.png (un
+// asset dedicado solo a los animales), pero ese archivo trae las patas del
+// perro cortadas en línea recta por el borde inferior de la imagen original
+// (no es un problema del recorte, viene así de fábrica). Hasta que llegue
+// una versión sin cortar, la marca sigue saliendo de LogoDefinitivo.png.
 
 import sharp from 'sharp';
 import { mkdir } from 'node:fs/promises';
@@ -15,7 +21,6 @@ import path from 'node:path';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const SRC = path.join(ROOT, 'assets', 'LogoDefinitivo.png');
-const ANIMALES_SRC = path.join(ROOT, 'assets', 'AnimalesLogo.png');
 const LOGO_DIR = path.join(ROOT, 'public', 'logo');
 const PUB = path.join(ROOT, 'public');
 const IMG_DIR = path.join(ROOT, 'public', 'img');
@@ -59,35 +64,21 @@ await sharp(blancoPng)
   .png({ compressionLevel: 9 })
   .toFile(path.join(LOGO_DIR, 'logo-blanco.png'));
 
-// ---- 3. Marca de los animales, sin texto ----
-// assets/AnimalesLogo.png trae solo el perro y el gato (sin la palabra "El
-// Perro Verde"), así que no hace falta recortar el logo completo a ciegas.
-// Eso sí: su "fondo transparente" en realidad es un cuadriculado gris/blanco
-// pintado a fuego en los píxeles (el PNG no tiene canal alfa real), así que
-// hay que quitarlo por color igual que con el logo original.
-async function quitarFondoClaro(buffer) {
-  const { data, info } = await sharp(buffer)
-    .ensureAlpha()
-    .raw()
-    .toBuffer({ resolveWithObject: true });
-  const px = info.width * info.height;
-  for (let i = 0; i < px; i++) {
-    const o = i * info.channels;
-    const min = Math.min(data[o], data[o + 1], data[o + 2]);
-    // El cuadriculado de fondo va de ~230 a 255; los animales, muy saturados,
-    // no pasan de ~40. Banda de transición amplia solo para suavizar bordes.
-    const alpha = ((200 - min) / 100) * 255;
-    data[o + 3] = Math.max(0, Math.min(255, Math.round(alpha)));
-  }
-  return sharp(data, {
-    raw: { width: info.width, height: info.height, channels: 4 },
-  })
-    .png()
-    .toBuffer();
-}
+// ---- 3. Marca de los animales, sin texto (parte superior del logo) ----
+// En este logo las patas del perro tocan justo la "V" de "Verde": no hay
+// ninguna fila 100% vacía que separe limpiamente iconos y texto (se probó
+// buscarla automáticamente y siempre colaba algún resto de letra). La altura
+// de corte de abajo se ajustó a ojo sobre el recorte actual (1577x731 tras el
+// trim inicial): incluye la cola y las cuatro patas enteras y corta justo
+// antes de que empiece cualquier letra. Si se sustituye el logo, hay que
+// volver a mirarlo a mano.
+const ALTO_MARCA = 460;
+const info = await sharp(tealPng).metadata();
 
-let marcaTeal = await quitarFondoClaro(await sharp(ANIMALES_SRC).toBuffer());
-marcaTeal = await sharp(marcaTeal).trim({ threshold: 10 }).toBuffer();
+let marcaTeal = await sharp(tealPng)
+  .extract({ left: 0, top: 0, width: info.width, height: Math.min(ALTO_MARCA, info.height) })
+  .trim({ threshold: 10 })
+  .toBuffer();
 
 // Marca teal para el header/footer (se usa con <Image /> de astro:assets).
 await sharp(marcaTeal)
